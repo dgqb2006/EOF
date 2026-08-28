@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>管理后台 —— 数字园丁日志</title>
+<link rel="stylesheet" href="css/style.css" />
+<style>
+  .admin-wrap { max-width: 920px; margin: 0 auto; padding: 28px 20px 60px; }
+  .admin-head { text-align:center; margin-bottom: 18px; }
+  .admin-head h1 { color: var(--ink); }
+  .admin-head p { color: var(--muted); font-size: 14px; }
+  .tabs { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin: 18px 0 24px; }
+  .tab-btn { border:1px solid var(--line); background:#fff; color:var(--ink);
+    padding:8px 16px; border-radius:999px; cursor:pointer; font-size:14px; transition:.18s; }
+  .tab-btn.active { background:var(--green); border-color:var(--green); color:#fff; }
+  .tab-btn:hover { border-color:var(--green); }
+  .panel { display:none; }
+  .panel.active { display:block; }
+  .item-card { background:#fff; border:1px solid var(--line); border-radius:14px;
+    padding:16px; margin-bottom:14px; box-shadow: var(--shadow); }
+  .item-card .row { display:flex; gap:10px; margin-bottom:8px; flex-wrap:wrap; }
+  .item-card label { font-size:12px; color:var(--muted); display:block; margin-bottom:3px; }
+  .item-card input, .item-card textarea { width:100%; padding:8px 10px; border:1px solid var(--line);
+    border-radius:8px; font-family:inherit; font-size:14px; background:#fffdf8; color:var(--ink); }
+  .item-card textarea { min-height:64px; resize:vertical; }
+  .item-card .half { flex:1 1 200px; }
+  .del-btn { background:#fff; color:#d9534f; border:1px solid #f0c9c7; border-radius:8px;
+    padding:6px 12px; cursor:pointer; font-size:13px; }
+  .del-btn:hover { background:#fdecea; }
+  .add-btn { background:var(--green); color:#fff; border:none; border-radius:999px;
+    padding:9px 18px; cursor:pointer; font-size:14px; margin-bottom:18px; }
+  .add-btn:hover { opacity:.9; }
+  .actions { position:sticky; bottom:0; background:#fffef9; border-top:1px solid var(--line);
+    padding:14px 0; display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+  .ghost-btn { background:#fff; border:1px solid var(--green); color:var(--green);
+    border-radius:999px; padding:9px 18px; cursor:pointer; font-size:14px; }
+  .ghost-btn:hover { background:var(--green-soft); }
+  .export-box { margin-top:14px; display:none; }
+  .export-box textarea { width:100%; min-height:160px; font-family:var(--mono); font-size:12px;
+    border:1px solid var(--line); border-radius:8px; padding:10px; background:#fffdf8; }
+  .hint { font-size:13px; color:var(--muted); background:var(--green-soft); border:1px solid #d8ecd8;
+    border-radius:10px; padding:10px 14px; margin-bottom:18px; line-height:1.7; }
+  .hint b { color:var(--green-deep); }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="nav-inner">
+    <span class="nav-brand">🌱<span>管理后台</span></span>
+    <nav class="nav-links"><a href="index.html">返回园子</a></nav>
+  </div>
+</header>
+
+<main class="admin-wrap">
+  <div class="admin-head">
+    <h1>🌿 数字园丁 · 内容管理台</h1>
+    <p>在网页里新增 / 修改 / 删除内容，保存在本机浏览器；想同步到线上站点，点「复制 data.js」发我即可。</p>
+  </div>
+
+  <div class="hint">
+    <b>怎么同步到 GitHub Pages？</b><br>
+    1) 在本页改好内容 → 2) 点底部「💾 存到本机」(下次打开还在) →
+    3) 点「📋 复制 data.js」把代码发给我，或「⬇ 下载 data.js」覆盖本地文件 →
+    4) 我帮你 push，线上站点自动更新，所有人可见。
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="site">站点信息</button>
+    <button class="tab-btn" data-tab="updates">今日新叶</button>
+    <button class="tab-btn" data-tab="resources">知识苗圃</button>
+    <button class="tab-btn" data-tab="thoughts">树下拾遗</button>
+    <button class="tab-btn" data-tab="tools">我的工具箱</button>
+  </div>
+
+  <section class="panel active" id="panel-site"></section>
+  <section class="panel" id="panel-updates"></section>
+  <section class="panel" id="panel-resources"></section>
+  <section class="panel" id="panel-thoughts"></section>
+  <section class="panel" id="panel-tools"></section>
+
+  <div class="actions">
+    <button class="ghost-btn" id="saveLocal">💾 存到本机</button>
+    <button class="ghost-btn" id="copyJs">📋 复制 data.js</button>
+    <button class="ghost-btn" id="downloadJs">⬇ 下载 data.js</button>
+    <button class="ghost-btn" id="resetLocal">🧹 清空本机草稿</button>
+  </div>
+
+  <div class="export-box" id="exportBox">
+    <label style="font-size:13px;color:var(--muted)">以下即生成的 data.js，复制发我即可同步上线：</label>
+    <textarea id="exportText" readonly></textarea>
+  </div>
+</main>
+
+<script src="js/data.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  // 深拷贝初始数据（来自 data.js 的全局变量）
+  function clone(x) { return JSON.parse(JSON.stringify(x)); }
+  var KEY = "eof_admin_data";
+
+  var state = {
+    SITE: clone(typeof SITE !== "undefined" ? SITE : {}),
+    recentUpdates: clone(typeof recentUpdates !== "undefined" ? recentUpdates : []),
+    resources: clone(typeof resources !== "undefined" ? resources : []),
+    thoughts: clone(typeof thoughts !== "undefined" ? thoughts : []),
+    tools: clone(typeof tools !== "undefined" ? tools : [])
+  };
+
+  // 若本机有草稿则恢复
+  try {
+    var saved = localStorage.getItem(KEY);
+    if (saved) { var o = JSON.parse(saved); if (o && o.SITE) state = o; }
+  } catch (e) {}
+
+  function esc(s) { return String(s == null ? "" : s); }
+
+  /* ---------- 通用：渲染一个面板的列表 ---------- */
+  function field(label, name, val, type) {
+    if (type === "textarea") {
+      return '<div class="row"><div class="half" style="flex:1 1 100%">' +
+        '<label>' + label + '</label>' +
+        '<textarea data-f="' + name + '">' + esc(val) + '</textarea></div></div>';
+    }
+    return '<div class="row"><div class="half">' +
+      '<label>' + label + '</label>' +
+      '<input data-f="' + name + '" value="' + esc(val).replace(/"/g, "&quot;") + '" /></div></div>';
+  }
+
+  function renderSite() {
+    var s = state.SITE;
+    var html =
+      field("网站标题 siteName", "siteName", s.siteName) +
+      field("副标题 tagline", "tagline", s.tagline) +
+      field("署名 authorName", "authorName", s.authorName) +
+      field("联系邮箱 email", "email", s.email) +
+      field("页脚年份 year", "year", s.year);
+    document.getElementById("panel-site").innerHTML =
+      '<div class="item-card" data-item="site">' + html + "</div>";
+  }
+
+  function renderList(panelId, key, fieldsFor, emptyText) {
+    var arr = state[key];
+    var html = arr.map(function (item, i) {
+      return '<div class="item-card" data-item="' + key + '" data-index="' + i + '">' +
+        fieldsFor(item, i) +
+        '<button class="del-btn" data-del="' + key + '" data-index="' + i + '">🗑 删除这条</button>' +
+      "</div>";
+    }).join("");
+    if (!html) html = '<p class="muted" style="color:var(--muted)">' + emptyText + "</p>";
+    document.getElementById(panelId).innerHTML = html;
+  }
+
+  function renderUpdates() {
+    renderList("panel-updates", "recentUpdates", function (u) {
+      return field("标题 title", "title", u.title) +
+             field("链接 link（如 knowledge.html）", "link", u.link) +
+             field("日期 date（YYYY-MM-DD）", "date", u.date);
+    }, "// 还没有新叶，点下方「+ 新增」种一棵");
+  }
+  function renderResources() {
+    renderList("panel-resources", "resources", function (r) {
+      return field("标题 title", "title", r.title) +
+             field("描述 desc", "desc", r.desc, "textarea") +
+             field("分类标签 tag（如 编程启蒙）", "tag", r.tag) +
+             field("类型 type（PPT/PDF/代码）", "type", r.type) +
+             field("日期 date", "date", r.date);
+    }, "// 苗圃还空着，点「+ 新增」播一颗");
+  }
+  function renderThoughts() {
+    renderList("panel-thoughts", "thoughts", function (t) {
+      return field("标题 title", "title", t.title) +
+             field("日期 date", "date", t.date) +
+             field("阅读时长 readingTime", "readingTime", t.readingTime) +
+             field("摘要 summary", "summary", t.summary, "textarea") +
+             field("正文 body", "body", t.body, "textarea");
+    }, "// 树下还没拾到碎片，点「+ 新增」写一段");
+  }
+  function renderTools() {
+    renderList("panel-tools", "tools", function (t) {
+      return field("名称 name", "name", t.name) +
+             field("图标 icon（emoji）", "icon", t.icon) +
+             field("描述 desc", "desc", t.desc) +
+             field("命令 cmd", "cmd", t.cmd);
+    }, "// 工具箱空空，点「+ 新增」放一件家当");
+  }
+
+  function renderAll() {
+    renderSite(); renderUpdates(); renderResources(); renderThoughts(); renderTools();
+  }
+  renderAll();
+
+  /* ---------- 输入即时写回 state（事件委托） ---------- */
+  document.querySelector(".admin-wrap").addEventListener("input", function (e) {
+    var el = e.target.closest("[data-f]");
+    if (!el) return;
+    var card = el.closest("[data-item]");
+    if (!card) return;
+    var name = el.getAttribute("data-f");
+    var val = el.value;
+    if (card.getAttribute("data-item") === "site") {
+      if (name === "year") val = parseInt(val, 10) || 2026;
+      state.SITE[name] = val;
+    } else {
+      var key = card.getAttribute("data-item");
+      var idx = parseInt(card.getAttribute("data-index"), 10);
+      state[key][idx][name] = val;
+    }
+  });
+
+  /* ---------- 删除 ---------- */
+  document.querySelector(".admin-wrap").addEventListener("click", function (e) {
+    var del = e.target.closest("[data-del]");
+    if (!del) return;
+    var key = del.getAttribute("data-del");
+    var idx = parseInt(del.getAttribute("data-index"), 10);
+    state[key].splice(idx, 1);
+    renderAll();
+  });
+
+  /* ---------- 新增按钮 ---------- */
+  var addDefs = {
+    updates: function () { return { title: "新的一条动态", link: "index.html", date: "2026-08-28" }; },
+    resources: function () { return { title: "新资源", desc: "一句话描述", tag: "编程启蒙", type: "PPT", date: "2026-08-28" }; },
+    thoughts: function () { return { title: "新随笔", date: "2026-08-28", readingTime: "3 分钟", summary: "摘要…", body: "（正文占位）…" }; },
+    tools: function () { return { title: "新工具", icon: "🛠", desc: "描述", cmd: "toolbox/x" }; }
+  };
+  ["updates", "resources", "thoughts", "tools"].forEach(function (k) {
+    var panel = document.getElementById("panel-" + k);
+    var btn = document.createElement("button");
+    btn.className = "add-btn";
+    btn.textContent = "+ 新增";
+    btn.addEventListener("click", function () {
+      var keyMap = { updates: "recentUpdates", resources: "resources", thoughts: "thoughts", tools: "tools" };
+      state[keyMap[k]].push(addDefs[k]());
+      renderAll();
+    });
+    panel.parentNode.insertBefore(btn, panel.nextSibling);
+  });
+
+  /* ---------- Tab 切换 ---------- */
+  document.querySelector(".tabs").addEventListener("click", function (e) {
+    var b = e.target.closest(".tab-btn");
+    if (!b) return;
+    document.querySelectorAll(".tab-btn").forEach(function (x) { x.classList.remove("active"); });
+    document.querySelectorAll(".panel").forEach(function (x) { x.classList.remove("active"); });
+    b.classList.add("active");
+    document.getElementById("panel-" + b.getAttribute("data-tab")).classList.add("active");
+  });
+
+  /* ---------- 存到本机 ---------- */
+  document.getElementById("saveLocal").addEventListener("click", function () {
+    localStorage.setItem(KEY, JSON.stringify(state));
+    alert("已存到本机浏览器（localStorage）。下次打开本页会自动恢复。");
+  });
+  document.getElementById("resetLocal").addEventListener("click", function () {
+    if (confirm("确定清空本机草稿？将恢复为仓库里的原始内容。")) {
+      localStorage.removeItem(KEY);
+      location.reload();
+    }
+  });
+
+  /* ---------- 生成 data.js 文本 ---------- */
+  function buildJs() {
+    function arr(name, list) {
+      return "const " + name + " = " + JSON.stringify(list, null, 2) + ";\n";
+    }
+    var head = "/* 数字园丁日志 —— 由管理后台生成 */\n";
+    return head +
+      "const SITE = " + JSON.stringify(state.SITE, null, 2) + ";\n\n" +
+      arr("recentUpdates", state.recentUpdates) + "\n" +
+      arr("resources", state.resources) + "\n" +
+      arr("thoughts", state.thoughts) + "\n" +
+      arr("tools", state.tools);
+  }
+
+  document.getElementById("copyJs").addEventListener("click", function () {
+    var txt = buildJs();
+    var box = document.getElementById("exportBox");
+    var ta = document.getElementById("exportText");
+    ta.value = txt;
+    box.style.display = "block";
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(txt).then(function () {
+        alert("已复制到剪贴板！把这段内容发给我，我就能帮你同步到 GitHub Pages。");
+      }, function () {
+        alert("请手动复制下方文本框里的内容发给我。");
+      });
+    } else {
+      ta.select();
+      alert("请手动复制下方文本框里的内容发给我。");
+    }
+  });
+
+  document.getElementById("downloadJs").addEventListener("click", function () {
+    var txt = buildJs();
+    var blob = new Blob([txt], { type: "text/javascript" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "data.js";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+})();
+</script>
+</body>
+</html>
