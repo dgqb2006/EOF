@@ -1,0 +1,379 @@
+/* =========================================================
+   数字园丁日志 —— 温暖教育风 · 浅色调
+   安静、简约、柔和。园丁照料知识幼苗的隐喻。
+   主色: 暖纸背景 #f6f3ec / 叶绿强调 #5f8d63 / 暖灰文字
+   ========================================================= */
+
+:root {
+  --bg:        #f6f3ec;   /* 暖纸背景 */
+  --bg-soft:   #fbf8f1;   /* 浅暖面板 */
+  --bg-card:   #ffffff;   /* 卡片表面 */
+  --green:     #5f8d63;   /* 叶绿强调 */
+  --green-deep:#3f6b46;   /* 深叶绿（悬停/强调） */
+  --green-dim: #a9c7ab;   /* 浅叶绿（装饰线） */
+  --green-soft:rgba(95, 141, 99, 0.10);
+  --text:      #423d36;   /* 暖灰文字 */
+  --text-dim:  #8d857a;   /* 弱化文字 */
+  --border:    #e7e0d2;   /* 柔和边框 */
+  --amber:     #b5832f;   /* 阅读时长暖色 */
+  --shadow:    0 4px 18px rgba(95, 80, 55, 0.08);
+  --shadow-hover: 0 8px 26px rgba(95, 80, 55, 0.14);
+  --radius:    14px;
+  --sans: "PingFang SC", "Microsoft YaHei", "Noto Sans SC",
+          "Hiragino Sans GB", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15.5px;
+  line-height: 1.75;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--green-deep); text-decoration: none; transition: color .18s; }
+
+main {
+  flex: 1 0 auto;
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 36px 22px 64px;
+}
+
+/* ---------------- 顶部细叶绿装饰条 ---------------- */
+.top-stripe {
+  height: 4px;
+  background: linear-gradient(90deg, var(--green), var(--green-dim), var(--green));
+  opacity: .8;
+}
+
+/* ---------------- 导航栏 ---------------- */
+#site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(246, 243, 236, 0.88);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 12px 22px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.nav-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--green-deep);
+  font-weight: 700;
+  font-size: 16px;
+  margin-right: 12px;
+  letter-spacing: .5px;
+}
+.nav-brand svg { width: 22px; height: 22px; }
+.nav-links { display: flex; gap: 6px; flex-wrap: wrap; }
+.nav-links a {
+  color: var(--text-dim);
+  padding: 5px 12px;
+  border-radius: 20px;
+  transition: color .18s, background .18s;
+}
+.nav-links a:hover { color: var(--green-deep); background: var(--green-soft); }
+.nav-links a.active {
+  color: #fff;
+  background: var(--green);
+}
+
+/* ---------------- 页脚 ---------------- */
+#site-footer {
+  flex-shrink: 0;
+  border-top: 1px solid var(--border);
+  background: var(--bg-soft);
+  color: var(--text-dim);
+  font-size: 13px;
+  padding: 20px 22px;
+  text-align: center;
+}
+#site-footer .heart { color: var(--green); }
+#site-footer a { color: var(--green-deep); }
+
+/* ---------------- 通用排版 ---------------- */
+h1, h2, h3 { color: var(--text); font-weight: 600; }
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--green-deep);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 10px;
+  margin: 8px 0 22px;
+  font-size: 19px;
+}
+.section-title .leaf { color: var(--green); font-size: 16px; }
+.section-title .sub {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--text-dim);
+  font-weight: 400;
+}
+
+.muted { color: var(--text-dim); }
+.green { color: var(--green-deep); }
+.tag-line { color: var(--text-dim); font-size: 14.5px; margin: 0 0 26px; }
+
+/* ---------------- 首页 Hero ---------------- */
+.hero {
+  text-align: center;
+  padding: 30px 0 18px;
+}
+.hero .logo-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 76px; height: 76px;
+  border-radius: 50%;
+  background: var(--green-soft);
+  border: 1px solid var(--green-dim);
+  margin-bottom: 16px;
+}
+.hero .logo-wrap svg { width: 42px; height: 42px; }
+.hero h1 {
+  font-size: 32px;
+  margin: 6px 0 4px;
+  letter-spacing: 1px;
+}
+.hero .hero-sub {
+  color: var(--text-dim);
+  font-size: 15px;
+  margin: 4px 0 2px;
+}
+.hero .hero-tag {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  background: var(--green-soft);
+  color: var(--green-deep);
+  font-size: 13.5px;
+}
+
+/* 今日新叶 列表 */
+.update-list { list-style: none; padding: 0; margin: 0; }
+.update-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+  background: var(--bg-card);
+  padding: 13px 16px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  transition: transform .16s, box-shadow .16s, border-color .16s;
+}
+.update-list li:hover {
+  transform: translateX(4px);
+  box-shadow: var(--shadow);
+  border-left-color: var(--green-deep);
+}
+.update-list .leaf-mark { color: var(--green); font-size: 15px; }
+.update-list .u-title { color: var(--text); flex: 1; }
+.update-list .u-title:hover { color: var(--green-deep); }
+.update-list .u-date { color: var(--text-dim); font-size: 13px; white-space: nowrap; }
+
+/* ---------------- 知识苗圃 卡片 ---------------- */
+.filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
+.filter-btn {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  background: var(--bg-card);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  padding: 6px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all .18s;
+}
+.filter-btn:hover { color: var(--green-deep); border-color: var(--green-dim); }
+.filter-btn.active { background: var(--green); color: #fff; border-color: var(--green); }
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(258px, 1fr));
+  gap: 18px;
+}
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.card:hover {
+  transform: translateY(-6px);
+  border-color: var(--green-dim);
+  box-shadow: var(--shadow-hover);
+}
+.card .seed { font-size: 20px; margin-bottom: 8px; }
+.card h3 { margin: 0 0 8px; font-size: 16.5px; }
+.card .desc { color: var(--text-dim); font-size: 13.5px; flex: 1; margin-bottom: 16px; }
+.card .meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12.5px;
+  gap: 8px;
+}
+.type-badge {
+  background: var(--green-soft);
+  color: var(--green-deep);
+  border: 1px solid var(--green-dim);
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 11.5px;
+}
+.card .date { color: var(--text-dim); }
+
+/* ---------------- 树下拾遗 时间轴 ---------------- */
+.timeline {
+  position: relative;
+  margin-left: 8px;
+  padding-left: 28px;
+  border-left: 2px solid var(--green-dim);
+}
+.timeline-item { position: relative; padding: 0 0 28px 0; }
+.timeline-item::before {
+  content: "🌱";
+  position: absolute;
+  left: -34px;
+  top: 2px;
+  font-size: 15px;
+  background: var(--bg);
+  padding: 0 2px;
+}
+.timeline-item .t-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.timeline-item h3 { margin: 0; font-size: 16.5px; }
+.timeline-item .t-date { color: var(--text-dim); font-size: 12.5px; }
+.timeline-item .t-read { color: var(--amber); font-size: 12.5px; }
+.timeline-item .t-summary { color: var(--text-dim); margin: 7px 0 0; font-size: 14px; }
+
+/* ---------------- 我的工具箱 ---------------- */
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 18px;
+}
+.tool-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px 18px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform .2s, box-shadow .2s, border-color .2s;
+}
+.tool-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--green-dim);
+  box-shadow: var(--shadow-hover);
+}
+.tool-icon {
+  font-size: 30px;
+  margin-bottom: 12px;
+}
+.tool-card h3 { margin: 0 0 6px; font-size: 15.5px; }
+.tool-card .t-desc { color: var(--text-dim); font-size: 13px; }
+
+/* ---------------- 关于 / 园丁名片 ---------------- */
+.profile {
+  display: flex;
+  gap: 22px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  margin: 18px 0;
+  box-shadow: var(--shadow);
+}
+.profile .avatar {
+  flex: 0 0 auto;
+  width: 84px; height: 84px;
+  border-radius: 50%;
+  background: var(--green-soft);
+  border: 1px solid var(--green-dim);
+  display: flex; align-items: center; justify-content: center;
+}
+.profile .avatar svg { width: 46px; height: 46px; }
+.profile .info { flex: 1; min-width: 240px; }
+.profile .info .row { margin: 4px 0; font-size: 14.5px; }
+.profile .info .key { color: var(--green-deep); font-weight: 600; }
+.profile .info .key::after { content: "："; }
+.profile .info .val { color: var(--text); }
+
+.about-p { color: var(--text); margin: 10px 0; }
+.contact-box {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  padding: 16px 20px;
+  margin-top: 16px;
+}
+.contact-box .green { font-weight: 600; }
+.contact-box a { color: var(--green-deep); }
+
+/* ---------------- Toast（功能开发中提示） ---------------- */
+#toast {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(0.96);
+  background: var(--bg-card);
+  border: 1px solid var(--green);
+  box-shadow: var(--shadow-hover);
+  color: var(--text);
+  padding: 20px 28px;
+  border-radius: var(--radius);
+  font-size: 14.5px;
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s, transform .2s;
+  max-width: 82vw;
+  text-align: center;
+}
+#toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+#toast .t-title { color: var(--green-deep); font-weight: 600; margin-bottom: 6px; }
+#toast .t-body { color: var(--text-dim); }
+#toast .t-ok { margin-top: 12px; font-size: 12px; color: var(--text-dim); }
+
+/* ---------------- 404 ---------------- */
+.error-page { text-align: center; padding: 60px 20px; }
+.error-page .sprout { font-size: 64px; }
+.error-page .code { font-size: 18px; color: var(--green-deep); margin: 14px 0 6px; letter-spacing: 2px; }
+.error-page .msg { color: var(--text); margin: 8px 0 26px; }
+
+/* ---------------- 响应式 ---------------- */
+@media (max-width: 600px) {
+  .hero h1 { font-size: 26px; }
+  .card-grid, .tool-grid { grid-template-columns: 1fr; }
+  .nav-inner { font-size: 13px; }
+}
